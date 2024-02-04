@@ -1,13 +1,16 @@
 import React from "react";
 import logo from "./logo.svg";
 import { Routes, Route, Link } from "react-router-dom";
+import { Provider } from 'react-redux';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import AddTodo from "./Components/addTodoComponent";
 import Todolist from "./Components/todolistComponent";
 import TodoCompoents from "./Components/todoComponent";
+import { store } from "./store";
 function App() {
   return (
+    <Provider store={store}>
     <div>
       <nav className="navbar navbar-expand navbar-dark bg-dark">
         <Link to={"/"} className="navbar-brand">
@@ -32,6 +35,7 @@ function App() {
         <Route path="/update/:id" element={<TodoCompoents />} />
       </Routes>
     </div>
+    </Provider>
   );
 }
 

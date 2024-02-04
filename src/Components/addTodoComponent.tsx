@@ -1,13 +1,19 @@
 import { Component, ChangeEvent } from "react";
 import todoServices from "../Services/todoServices";
 import IdoData from "../Types/todoTypes";
+import { addTodos, IAddTodos } from "../Api/TodoApi";
+import { connect } from "react-redux";
+import { RootState } from "../store";
 
-type Props = {};
+
+type Props = {
+  addTodos:(payload:IAddTodos) => void 
+};
 type State = IdoData & {
   submitted: boolean;
 };
 
-export default class AddTodo extends Component<Props, State> {
+ class AddTodo extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.onChangetodo = this.onChangetodo.bind(this);
@@ -28,16 +34,16 @@ export default class AddTodo extends Component<Props, State> {
       //   completed:this.state.completed,
       userId: this.state.userId,
     };
-
-    let response = await todoServices.createTodo(data);
-    console.log("response", response);
-    if (response && response.status === 200) {
-      this.setState({
-        todo: response.data.todo,
-        userId: response.data.userId,
-        submitted: true,
-      });
-    }
+  await this.props.addTodos(data)
+    // let response = await todoServices.createTodo(data);
+    // console.log("response", response);
+    // if (response && response.status === 200) {
+    //   this.setState({
+    //     todo: response.data.todo,
+    //     userId: response.data.userId,
+    //     submitted: true,
+    //   });
+    // }
   }
   newtodo() {
     this.setState({
@@ -83,3 +89,11 @@ export default class AddTodo extends Component<Props, State> {
     );
   }
 }
+const mapStateToProps = (state: RootState) => ({
+  todosdata: state.todos.AllTodo
+});
+
+const mapDispatchToProps = {
+  addTodos
+};
+export default connect(mapStateToProps, mapDispatchToProps)(AddTodo);

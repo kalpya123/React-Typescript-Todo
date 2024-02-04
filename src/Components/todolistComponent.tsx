@@ -1,29 +1,35 @@
 import { Component, ChangeEvent } from "react";
+import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
 import todoServices from "../Services/todoServices";
 import IdoData from "../Types/todoTypes";
+import { RootState } from "../store/index";
+import { getAllTodos } from "../Api/TodoApi"
 import "../App.css";
-type Props = {};
+type Props = {
+  todosdata?: Array<IdoData>,
+  getAllTodos:() => void
+};
 type State = {
-  TodoList: Array<IdoData>;
+  // TodoList: Array<IdoData>;
   currentIndex: number;
 };
 
-export default class Todolist extends Component<Props, State> {
+ class Todolist extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      TodoList: [],
+      // TodoList: [],
       currentIndex: 0,
     };
   }
   componentDidMount() {
-    this.GetAllTodo();
+    this.props.getAllTodos();
   }
   async GetAllTodo() {
     let finalResponse: any = await todoServices.getAllTodo();
     if (finalResponse && finalResponse.status === 200) {
-      this.setState({ TodoList: finalResponse.data.todos });
+      // this.setState({ TodoList: finalResponse.data.todos });
     }
   }
   async deleteTodo(id: number, index: number) {
@@ -36,6 +42,7 @@ export default class Todolist extends Component<Props, State> {
     }
   }
   render() {
+    console.log(this.props.todosdata)
     return (
       <>
         <div className="">
@@ -43,8 +50,8 @@ export default class Todolist extends Component<Props, State> {
           <h4>Todo List</h4>
 
           <ul className="list-group">
-            {this.state.TodoList &&
-              this.state.TodoList.map((todo: IdoData,index:number) => (
+            {this.props.todosdata &&
+              this.props.todosdata.map((todo: IdoData,index:number) => (
                 <li
                   className={
                     "list-group-item "
@@ -62,7 +69,6 @@ export default class Todolist extends Component<Props, State> {
               >
                 Edit
               </Link>
-                  {/* <button type="button" className="btn btn-primary ml-5">Update</button> */}
                 </li>
               ))}
           </ul>
@@ -74,3 +80,11 @@ export default class Todolist extends Component<Props, State> {
   }
 }
 
+const mapStateToProps = (state: RootState) => ({
+  todosdata: state.todos.AllTodo
+});
+
+const mapDispatchToProps = {
+  getAllTodos
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Todolist);
